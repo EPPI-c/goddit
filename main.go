@@ -89,10 +89,8 @@ func (r *RedditCredentials) ReadCredentialFile(credentialFile string) {
 func (r *Reddit) Init() {
 	err := r.ReadAccessTokenFile(r.AccessTokenFile)
 	if err == nil && !r.isExpired() {
-        fmt.Println("no request")
 		return
 	}
-    fmt.Println("request")
 	client := &http.Client{}
 	parameters := fmt.Sprintf(`grant_type=password&username=%s&password=%s`, r.Username, r.Password)
 	data := strings.NewReader(parameters)
@@ -177,6 +175,11 @@ func (r *Reddit) New(subreddit string, limit int, show bool) string {
 		parameters = fmt.Sprintf("%s&show=all", parameters)
 	}
 	return r.new(subreddit, parameters)
+}
+
+func (r *Reddit) Info(id string) string {
+    endpoint := fmt.Sprintf("api/info?id=%s", id)
+	return r.request("GET", endpoint, "")
 }
 
 func (r *Reddit) new(subreddit, parameters string) string {
