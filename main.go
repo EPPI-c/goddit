@@ -104,6 +104,9 @@ func (r *Reddit) Init() {
 	if err != nil {
 		log.Fatal(err)
 	}
+    if resp.StatusCode != http.StatusOK {
+        fmt.Println(fmt.Sprintf("request to \"reddit.com/api/v1/access_token\" with parameters \"%s\" returned status code \"%s\"", parameters, resp.Status))
+    }
 	defer resp.Body.Close()
 	bodyText, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -144,6 +147,9 @@ func (r *Reddit) request(method, endpoint, parameters string) string {
 	if err != nil {
 		log.Fatal(err)
 	}
+    if resp.StatusCode != http.StatusOK {
+        fmt.Println(fmt.Sprintf("request to \"%s\" with parameters \"%s\" returned status code \"%s\"", endpoint, parameters, resp.Status))
+    }
 	defer resp.Body.Close()
 	bodyText, err := io.ReadAll(resp.Body)
 	if err != nil {
