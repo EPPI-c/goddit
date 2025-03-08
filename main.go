@@ -1,4 +1,4 @@
-package goddit
+package main
 
 import (
 	"encoding/json"
@@ -159,36 +159,8 @@ func (r *Reddit) request(method, endpoint, parameters string) string {
 	return str
 }
 
-func (r *Reddit) NewAfter(subreddit, after string, count, limit int, show bool) string {
-	parameters := fmt.Sprintf("after=%s&count=%d&limit=%d", after, count, limit)
-	if show {
-		parameters = fmt.Sprintf("%s&show=all", parameters)
-	}
-	return r.new(subreddit, parameters)
-}
-
-func (r *Reddit) NewBefore(subreddit, before string, count, limit int, show bool) string {
-	parameters := fmt.Sprintf("before=%s&count=%d&limit=%d", before, count, limit)
-	if show {
-		parameters = fmt.Sprintf("%s&show=all", parameters)
-	}
-	return r.new(subreddit, parameters)
-}
-
-func (r *Reddit) New(subreddit string, limit int, show bool) string {
-	parameters := fmt.Sprintf("limit=%d", limit)
-	if show {
-		parameters = fmt.Sprintf("%s&show=all", parameters)
-	}
-	return r.new(subreddit, parameters)
-}
-
 func (r *Reddit) Info(id string) string {
     endpoint := fmt.Sprintf("api/info?id=%s", id)
 	return r.request("GET", endpoint, "")
 }
 
-func (r *Reddit) new(subreddit, parameters string) string {
-	endpoint := fmt.Sprintf("r/%s/new?%s", subreddit, parameters)
-	return r.request("GET", endpoint, "")
-}
