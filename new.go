@@ -1,4 +1,4 @@
-package main
+package goddit
 
 import (
 	"encoding/json"
