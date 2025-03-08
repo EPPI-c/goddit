@@ -1,4 +1,4 @@
-package goddit
+package main
 
 import (
 	"encoding/json"
@@ -7,16 +7,16 @@ import (
 )
 
 type ListingPost struct {
-	AuthorFlairBackgroundColor string `json:"author_flair_background_color"`
-	ApprovedAtUtc              any    `json:"approved_at_utc"`
-	Subreddit                  string `json:"subreddit"`
-	Selftext                   string `json:"selftext"`
-	AuthorFullname             string `json:"author_fullname"`
-	Saved                      bool   `json:"saved"`
-	ModReasonTitle             any    `json:"mod_reason_title"`
-	Gilded                     int    `json:"gilded"`
-	Clicked                    bool   `json:"clicked"`
-	Title                      string `json:"title"`
+	AuthorFlairBackgroundColor string  `json:"author_flair_background_color"`
+	ApprovedAtUtc              float64 `json:"approved_at_utc"`
+	Subreddit                  string  `json:"subreddit"`
+	Selftext                   string  `json:"selftext"`
+	AuthorFullname             string  `json:"author_fullname"`
+	Saved                      bool    `json:"saved"`
+	ModReasonTitle             any     `json:"mod_reason_title"`
+	Gilded                     int     `json:"gilded"`
+	Clicked                    bool    `json:"clicked"`
+	Title                      string  `json:"title"`
 	LinkFlairRichtext          []struct {
 		E string `json:"e"`
 		T string `json:"t"`
@@ -80,7 +80,7 @@ type ListingPost struct {
 	SelftextHTML        any     `json:"selftext_html"`
 	Likes               any     `json:"likes"`
 	SuggestedSort       any     `json:"suggested_sort"`
-	BannedAtUtc         any     `json:"banned_at_utc"`
+	BannedAtUtc         float64 `json:"banned_at_utc"`
 	URLOverriddenByDest string  `json:"url_overridden_by_dest"`
 	ViewCount           any     `json:"view_count"`
 	Archived            bool    `json:"archived"`
@@ -157,7 +157,7 @@ type PostListing struct {
 		Modhash   any    `json:"modhash"`
 		GeoFilter string `json:"geo_filter"`
 		Children  []struct {
-			Kind string  `json:"kind"`
+			Kind string      `json:"kind"`
 			Data ListingPost `json:"data"`
 		} `json:"children"`
 		Before any `json:"before"`
@@ -190,15 +190,15 @@ func (r *Reddit) New(subreddit string, limit int, show bool) []ListingPost {
 
 func (r *Reddit) new(subreddit, parameters string) []ListingPost {
 	endpoint := fmt.Sprintf("r/%s/new?%s", subreddit, parameters)
-    listingString := r.request("GET", endpoint, "")
-    var listing PostListing
-    err := json.Unmarshal([]byte(listingString), &listing)
-    if err != nil {
-        log.Fatal(err)
-    }
-    var result []ListingPost
-    for _, s := range listing.Data.Children {
-        result = append(result, s.Data)
-    }
-    return result
+	listingString := r.request("GET", endpoint, "")
+	var listing PostListing
+	err := json.Unmarshal([]byte(listingString), &listing)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var result []ListingPost
+	for _, s := range listing.Data.Children {
+		result = append(result, s.Data)
+	}
+	return result
 }

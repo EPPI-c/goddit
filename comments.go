@@ -1,15 +1,15 @@
-package goddit
+package main
 
 import (
+	"encoding/json"
 	"fmt"
-    "encoding/json"
-    "log"
+	"log"
 )
 
 type ListingComment struct {
 	LinkURL             string  `json:"link_url"`
 	SubredditID         string  `json:"subreddit_id"`
-	ApprovedAtUtc       any     `json:"approved_at_utc"`
+	ApprovedAtUtc       float64 `json:"approved_at_utc"`
 	AuthorIsBlocked     bool    `json:"author_is_blocked"`
 	CommentType         any     `json:"comment_type"`
 	LinkTitle           string  `json:"link_title"`
@@ -27,7 +27,7 @@ type ListingComment struct {
 	UserReports         []any   `json:"user_reports"`
 	Saved               bool    `json:"saved"`
 	ID                  string  `json:"id"`
-	BannedAtUtc         any     `json:"banned_at_utc"`
+	BannedAtUtc         float64 `json:"banned_at_utc"`
 	ModReasonTitle      any     `json:"mod_reason_title"`
 	Gilded              int     `json:"gilded"`
 	Archived            bool    `json:"archived"`
@@ -98,7 +98,7 @@ type CommentListing struct {
 		Modhash   any    `json:"modhash"`
 		GeoFilter string `json:"geo_filter"`
 		Children  []struct {
-			Kind string           `json:"kind"`
+			Kind string         `json:"kind"`
 			Data ListingComment `json:"data"`
 		} `json:"children"`
 		Before any `json:"before"`
@@ -110,7 +110,7 @@ func (r *Reddit) Comments(subreddit, sort string, limit int, show bool) []Listin
 	if show {
 		parameters = fmt.Sprintf("%s&show=all", parameters)
 	}
-    return r.comments(subreddit, parameters)
+	return r.comments(subreddit, parameters)
 }
 
 func (r *Reddit) CommentsAfter(subreddit, after, sort string, limit int, show bool) []ListingComment {
@@ -118,7 +118,7 @@ func (r *Reddit) CommentsAfter(subreddit, after, sort string, limit int, show bo
 	if show {
 		parameters = fmt.Sprintf("%s&show=all", parameters)
 	}
-    return r.comments(subreddit, parameters)
+	return r.comments(subreddit, parameters)
 }
 
 func (r *Reddit) CommentsBefore(subreddit, before, sort string, limit int, show bool) []ListingComment {
@@ -126,20 +126,20 @@ func (r *Reddit) CommentsBefore(subreddit, before, sort string, limit int, show 
 	if show {
 		parameters = fmt.Sprintf("%s&show=all", parameters)
 	}
-    return r.comments(subreddit, parameters)
+	return r.comments(subreddit, parameters)
 }
 
-func (r *Reddit) comments(subreddit string, parameters string) []ListingComment{
+func (r *Reddit) comments(subreddit string, parameters string) []ListingComment {
 	endpoint := fmt.Sprintf("r/%s/comments?%s", subreddit, parameters)
-    listingString := r.request("GET", endpoint, "")
-    var listing CommentListing
-    err := json.Unmarshal([]byte(listingString), &listing)
-    if err != nil {
-        log.Fatal(err)
-    }
-    var result []ListingComment
-    for _, s := range listing.Data.Children {
-        result = append(result, s.Data)
-    }
-    return result
+	listingString := r.request("GET", endpoint, "")
+	var listing CommentListing
+	err := json.Unmarshal([]byte(listingString), &listing)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var result []ListingComment
+	for _, s := range listing.Data.Children {
+		result = append(result, s.Data)
+	}
+	return result
 }
